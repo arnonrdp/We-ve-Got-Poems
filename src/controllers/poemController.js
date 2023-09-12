@@ -13,57 +13,10 @@ const connect = async (req, res) => {
     const result = await client.query('SELECT NOW() as current_time')
     const currentTime = result.rows[0].current_time
     client.release()
-    res.send(`O servidor PostgreSQL está online e a hora atual é: ${currentTime}`)
+    res.send(`The PostgreSQL server is online and the current time is: ${currentTime}`)
   } catch (error) {
-    console.error('Erro ao conectar ao banco de dados:', error)
-    res.status(500).send('Erro ao conectar ao banco de dados')
-  }
-}
-
-// Route to create the 'poems' table
-const createTable = async (req, res) => {
-  try {
-    const client = await pool.connect()
-
-    // Query SQL to create the 'poems' table
-    const createTableQuery = `
-      CREATE TABLE IF NOT EXISTS poems (
-        id SERIAL PRIMARY KEY,
-        title VARCHAR(255) NOT NULL,
-        author VARCHAR(255) NOT NULL,
-        content TEXT NOT NULL
-      );
-    `
-
-    await client.query(createTableQuery)
-    client.release()
-
-    res.send('Tabela "poems" criada com sucesso!')
-  } catch (error) {
-    console.error('Erro ao criar a tabela "poems":', error)
-    res.status(500).send('Erro ao criar a tabela "poems"')
-  }
-}
-
-const listTables = async (req, res) => {
-  try {
-    const client = await pool.connect()
-
-    // Query SQL to list all tables from the database
-    const listTablesQuery = `
-      SELECT table_name
-      FROM information_schema.tables
-      WHERE table_schema = 'public';
-    `
-
-    const result = await client.query(listTablesQuery)
-    const tables = result.rows.map((row) => row.table_name)
-    client.release()
-
-    res.json(tables)
-  } catch (error) {
-    console.error('Erro ao listar tabelas:', error)
-    res.status(500).json({ error: 'Erro ao listar tabelas' })
+    console.error('Error connecting to database:', error)
+    res.status(500).send('Error connecting to database')
   }
 }
 
@@ -113,8 +66,6 @@ const getPoems = async (req, res) => {
 
 module.exports = {
   connect,
-  createTable,
-  listTables,
   addPoem,
   getPoems
 }
