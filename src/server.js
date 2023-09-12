@@ -8,7 +8,7 @@ const port = process.env.PORT || 3000
 const poemRoutes = require('./routes/poemRoutes')
 
 // Use the imported routes
-app.use('/', poemRoutes) // All routes in poemRoutes will start with '/poems'
+app.use('/', poemRoutes)
 
 app.listen(port, () => {
   console.log(`Servidor Express está rodando na porta ${port}`)
