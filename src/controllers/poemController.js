@@ -6,20 +6,6 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 })
 
-// Route to test the connection with the database
-const connect = async (req, res) => {
-  try {
-    const client = await pool.connect()
-    const result = await client.query('SELECT NOW() as current_time')
-    const currentTime = result.rows[0].current_time
-    client.release()
-    res.send(`The PostgreSQL server is online and the current time is: ${currentTime}`)
-  } catch (error) {
-    console.error('Error connecting to database:', error)
-    res.status(500).send('Error connecting to database')
-  }
-}
-
 // Route to add a new poem to the 'poems' table
 const addPoem = async (req, res) => {
   try {
@@ -65,7 +51,6 @@ const getPoems = async (req, res) => {
 }
 
 module.exports = {
-  connect,
   addPoem,
   getPoems
 }
