@@ -45,8 +45,54 @@ const getPoems = async (req, res) => {
 
     res.json(poems)
   } catch (error) {
-    console.error('Erro ao obter os poemas:', error)
-    res.status(500).json({ error: 'Erro ao obter os poemas' })
+    console.error('Error getting poems:', error)
+    res.status(500).json({ error: 'Error getting poems' })
+  }
+}
+
+const update = async (req, res) => {
+  try {
+    const { id } = req.params
+    const { title, author, content } = req.body
+
+    const client = await pool.connect()
+
+    // Query SQL to update a poem from the 'poems' table
+    const updateQuery = `
+      UPDATE poems
+      SET title = $1, author = $2, content = $3
+      WHERE id = $4
+    `
+
+    await client.query(updateQuery, [title, author, content, id])
+    client.release()
+
+    res.json({ message: 'Poem updated successfully' })
+  } catch (error) {
+    console.error('Error updating poem:', error)
+    res.status(500).json({ error: 'Error updating poem' })
+  }
+}
+
+const remove = async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const client = await pool.connect()
+
+    // Query SQL to delete a poem from the 'poems' table
+    const deleteQuery = `
+      DELETE FROM poems
+      WHERE id = $1
+    `
+
+    await client.query(deleteQuery, [id])
+    client.release()
+
+    res.json({ message: 'Poem deleted successfully' })
+  } catch (error) {
+    console.error('Error deleting poem:', error)
+    res.status(500).json({ error: 'Error deleting poem' })
   }
 }
 
