@@ -54,7 +54,25 @@ const listTables = async (req, res) => {
   }
 }
 
+const dropTable = async (req, res) => {
+  try {
+    const client = await pool.connect()
+
+    // Query SQL to drop the 'poems' table
+    const dropTableQuery = 'DROP TABLE IF EXISTS poems;'
+
+    await client.query(dropTableQuery)
+    client.release()
+
+    res.send('"poems" table dropped successfully')
+  } catch (error) {
+    console.error('Error dropping table "poems":', error)
+    res.status(500).send('Error dropping table "poems"')
+  }
+}
+
 module.exports = {
   createTable,
-  listTables
+  listTables,
+  dropTable
 }
