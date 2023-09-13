@@ -21,10 +21,10 @@ const create = async (req, res) => {
     `
 
     const result = await client.query(insertQuery, [title, author, content])
-    const poemId = result.rows[0].id
+    const { id } = result.rows[0]
     client.release()
 
-    res.json({ message: 'Poem added successfully', poemId })
+    res.json({ id, message: 'Poem added successfully' })
   } catch (error) {
     console.error('Error adding poem:', error)
     res.status(500).json({ error: 'Error adding poem' })
