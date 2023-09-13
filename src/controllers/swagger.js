@@ -20,7 +20,13 @@ const spec = {
             description: 'Success',
             content: {
               'application/json': {
-                schema: { $ref: '#/components/schemas/Poem' }
+                schema: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'integer', example: 1 },
+                    message: { type: 'string', example: 'Poem added successfully' }
+                  }
+                }
               }
             }
           },
