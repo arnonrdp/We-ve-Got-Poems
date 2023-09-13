@@ -10,6 +10,7 @@ const spec = {
     { url: 'http://localhost:5432/v1', description: 'Local server' }
   ],
   paths: {
+    // TODO: Add parameters for posting a poem
     '/poem': {
       post: {
         summary: 'Add a poem to the database',
