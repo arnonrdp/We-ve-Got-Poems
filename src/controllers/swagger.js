@@ -27,6 +27,27 @@ const spec = {
           404: { $ref: '#/components/responses/NotFound' }
         }
       }
+    },
+    '/poems': {
+      get: {
+        summary: 'Get all poems from the database',
+        operationId: 'getPoems',
+        tags: ['Poems'],
+        responses: {
+          200: {
+            description: 'Success',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'array',
+                  items: { $ref: '#/components/schemas/Poem' }
+                }
+              }
+            }
+          },
+          404: { $ref: '#/components/responses/NotFound' }
+        }
+      }
     }
   }
 }
