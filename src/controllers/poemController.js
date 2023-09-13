@@ -7,7 +7,7 @@ const pool = new Pool({
 })
 
 // Route to add a new poem to the 'poems' table
-const addPoem = async (req, res) => {
+const create = async (req, res) => {
   try {
     const { title, author, content } = req.body // Extracts the data from the request body
 
@@ -24,15 +24,15 @@ const addPoem = async (req, res) => {
     const poemId = result.rows[0].id
     client.release()
 
-    res.json({ message: 'Poema adicionado com sucesso', poemId })
+    res.json({ message: 'Poem added successfully', poemId })
   } catch (error) {
-    console.error('Erro ao adicionar o poema:', error)
-    res.status(500).json({ error: 'Erro ao adicionar o poema' })
+    console.error('Error adding poem:', error)
+    res.status(500).json({ error: 'Error adding poem' })
   }
 }
 
 // Route to get all poems from the 'poems' table
-const getPoems = async (req, res) => {
+const read = async (req, res) => {
   try {
     const client = await pool.connect()
 
@@ -97,6 +97,8 @@ const remove = async (req, res) => {
 }
 
 module.exports = {
-  addPoem,
-  getPoems
+  create,
+  read,
+  update,
+  remove
 }
