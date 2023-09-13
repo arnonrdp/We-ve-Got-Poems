@@ -15,9 +15,10 @@ const createTable = async (req, res) => {
     const createTableQuery = `
       CREATE TABLE IF NOT EXISTS poems (
         id SERIAL PRIMARY KEY,
-        title VARCHAR(255) NOT NULL,
         author VARCHAR(255) NOT NULL,
-        content TEXT NOT NULL
+        content TEXT NOT NULL,
+        created_at TIMESTAMP NOT NULL,
+        title VARCHAR(255) NOT NULL
       );
     `
 
