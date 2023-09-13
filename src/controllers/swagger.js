@@ -49,7 +49,31 @@ const spec = {
         }
       }
     }
-  }
+  },
+  components: {
+    schemas: {
+      Poem: {
+        type: 'object',
+        properties: {
+          id: { type: 'integer', example: 1 },
+          author: { type: 'string', example: 'CodeVerse Muse' },
+          content: {
+            type: 'string',
+            example:
+              "In lines of code, we weave our art,\nA digital symphony from mind to chart.\nWith functions, loops, and logic clear,\nWe conquer problems, quelling fear.\n\nIn bytes and bits, our thoughts take flight,\nCreating programs that shine so bright.\nFrom bugs we learn, and errors mend,\nIn the world of code, there's no real end.\n\nSo, let us code with passion and grace,\nCreating software in this boundless space.\nWith every keystroke, we write our story,\nIn the language of machines, we find our glory."
+          },
+          created_at: { type: 'string', format: 'timestamp', example: '2023-09-14T00:23:46.321Z' },
+          title: { type: 'string', example: "Coding Chronicles: A Programmer's Poem" }
+        }
+      }
+    },
+    responses: {
+      NotFound: {
+        description: 'Not found'
+      }
+    }
+  },
+  tags: [{ name: 'Poems' }]
 }
 
 window.onload = function () {
