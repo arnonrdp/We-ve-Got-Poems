@@ -15,8 +15,8 @@ const addPoem = async (req, res) => {
 
     // Query SQL to insert a new poem into the 'poems' table
     const insertQuery = `
-      INSERT INTO poems (title, author, content)
-      VALUES ($1, $2, $3)
+      INSERT INTO poems (title, author, content, created_at)
+      VALUES ($1, $2, $3, NOW())
       RETURNING id;
     `
 
