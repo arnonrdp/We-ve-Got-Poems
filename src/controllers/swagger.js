@@ -147,6 +147,49 @@ const spec = {
             }
           }
         }
+      },
+      delete: {
+        tags: ['Poems'],
+        summary: 'Delete a poem from the database',
+        operationId: 'deletePoem',
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            description: 'The ID of the poem to delete',
+            required: true,
+            schema: { type: 'integer', example: 1 }
+          }
+        ],
+        responses: {
+          200: {
+            description: 'Success',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    message: { type: 'string', example: 'Poem deleted successfully' }
+                  }
+                }
+              }
+            }
+          },
+          404: { $ref: '#/components/responses/NotFound' },
+          500: {
+            description: 'Internal server error',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    error: { type: 'string', example: 'Error deleting poem' }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
