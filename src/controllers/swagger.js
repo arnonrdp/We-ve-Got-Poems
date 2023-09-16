@@ -15,7 +15,27 @@ const spec = {
       post: {
         summary: 'Add a poem to the database',
         operationId: 'addPoem',
-        tags: ['Poems'],
+        requestBody: {
+          description: 'The poem to add',
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  author: { type: 'string', example: 'CodeVerse Muse' },
+                  content: {
+                    type: 'string',
+                    example:
+                      "In lines of code, we weave our art,\nA digital symphony from mind to chart.\nWith functions, loops, and logic clear,\nWe conquer problems, quelling fear.\n\nIn bytes and bits, our thoughts take flight,\nCreating programs that shine so bright.\nFrom bugs we learn, and errors mend,\nIn the world of code, there's no real end.\n\nSo, let us code with passion and grace,\nCreating software in this boundless space.\nWith every keystroke, we write our story,\nIn the language of machines, we find our glory.",
+                    description: 'The poem content'
+                  },
+                  title: { type: 'string', example: "Coding Chronicles: A Programmer's Poem" }
+                }
+              }
+            }
+          }
+        },
         responses: {
           200: {
             description: 'Success',
