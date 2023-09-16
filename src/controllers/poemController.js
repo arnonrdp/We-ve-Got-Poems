@@ -60,10 +60,9 @@ const update = async (req, res) => {
     // Query SQL to update a poem from the 'poems' table
     const updateQuery = `
       UPDATE poems
-      SET title = $1, author = $2, content = $3
+      SET title = COALESCE($1, title), author = COALESCE($2, author), content = COALESCE($3, content)
       WHERE id = $4
     `
-
     await client.query(updateQuery, [title, author, content, id])
     client.release()
 
