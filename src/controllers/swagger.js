@@ -88,6 +88,66 @@ const spec = {
           404: { $ref: '#/components/responses/NotFound' }
         }
       }
+    },
+    '/poem/{id}': {
+      put: {
+        tags: ['Poems'],
+        summary: 'Update a poem in the database',
+        operationId: 'updatePoem',
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            description: 'The ID of the poem to update',
+            required: true,
+            schema: { type: 'integer', example: 1 }
+          }
+        ],
+        requestBody: {
+          description: 'The poem to update',
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  author: { type: 'string', example: 'CodeVerse Muse' },
+                  title: { type: 'string', example: "Coding Chronicles: A Programmer's Poem" }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          200: {
+            description: 'Success',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    message: { type: 'string', example: 'Poem updated successfully' }
+                  }
+                }
+              }
+            }
+          },
+          404: { $ref: '#/components/responses/NotFound' },
+          500: {
+            description: 'Internal server error',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    error: { type: 'string', example: 'Error updating poem' }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   components: {
