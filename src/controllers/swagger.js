@@ -51,7 +51,20 @@ const spec = {
               }
             }
           },
-          404: { $ref: '#/components/responses/NotFound' }
+          404: { $ref: '#/components/responses/NotFound' },
+          500: {
+            description: 'Internal server error',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    error: { type: 'string', example: 'Error adding poem' }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
