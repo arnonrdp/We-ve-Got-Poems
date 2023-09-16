@@ -10,9 +10,9 @@ const spec = {
     { url: 'http://localhost:5432/v1', description: 'Local server' }
   ],
   paths: {
-    // TODO: Add parameters for posting a poem
     '/poem': {
       post: {
+        tags: ['Poems'],
         summary: 'Add a poem to the database',
         operationId: 'addPoem',
         requestBody: {
@@ -70,9 +70,9 @@ const spec = {
     },
     '/poems': {
       get: {
+        tags: ['Poems'],
         summary: 'Get all poems from the database',
         operationId: 'getPoems',
-        tags: ['Poems'],
         responses: {
           200: {
             description: 'Success',
