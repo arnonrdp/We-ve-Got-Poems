@@ -18,53 +18,12 @@ const spec = {
         requestBody: {
           description: 'The poem to add',
           required: true,
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  author: { type: 'string', example: 'CodeVerse Muse' },
-                  content: {
-                    type: 'string',
-                    example:
-                      "In lines of code, we weave our art,\nA digital symphony from mind to chart.\nWith functions, loops, and logic clear,\nWe conquer problems, quelling fear.\n\nIn bytes and bits, our thoughts take flight,\nCreating programs that shine so bright.\nFrom bugs we learn, and errors mend,\nIn the world of code, there's no real end.\n\nSo, let us code with passion and grace,\nCreating software in this boundless space.\nWith every keystroke, we write our story,\nIn the language of machines, we find our glory.",
-                    description: 'The poem content'
-                  },
-                  title: { type: 'string', example: "Coding Chronicles: A Programmer's Poem" }
-                }
-              }
-            }
-          }
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/PoemInput' } } }
         },
         responses: {
-          200: {
-            description: 'Success',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    id: { type: 'integer', example: 1 },
-                    message: { type: 'string', example: 'Poem added successfully' }
-                  }
-                }
-              }
-            }
-          },
+          200: { description: 'Success', content: { 'application/json': { schema: { $ref: '#/components/schemas/PoemResponse' } } } },
           404: { $ref: '#/components/responses/NotFound' },
-          500: {
-            description: 'Internal server error',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    error: { type: 'string', example: 'Error adding poem' }
-                  }
-                }
-              }
-            }
-          }
+          500: { description: 'Internal server error', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } }
         }
       }
     },
@@ -76,14 +35,7 @@ const spec = {
         responses: {
           200: {
             description: 'Success',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'array',
-                  items: { $ref: '#/components/schemas/Poem' }
-                }
-              }
-            }
+            content: { 'application/json': { schema: { type: 'array', items: { $ref: '#/components/schemas/Poem' } } } }
           },
           404: { $ref: '#/components/responses/NotFound' }
         }
@@ -100,52 +52,18 @@ const spec = {
             in: 'path',
             description: 'The ID of the poem to update',
             required: true,
-            schema: { type: 'integer', example: 1 }
+            schema: { type: 'integer' }
           }
         ],
         requestBody: {
           description: 'The poem to update',
           required: true,
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  author: { type: 'string', example: 'CodeVerse Muse' },
-                  title: { type: 'string', example: "Coding Chronicles: A Programmer's Poem" }
-                }
-              }
-            }
-          }
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/PoemInput' } } }
         },
         responses: {
-          200: {
-            description: 'Success',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    message: { type: 'string', example: 'Poem updated successfully' }
-                  }
-                }
-              }
-            }
-          },
+          200: { description: 'Success', content: { 'application/json': { schema: { $ref: '#/components/schemas/MessageResponse' } } } },
           404: { $ref: '#/components/responses/NotFound' },
-          500: {
-            description: 'Internal server error',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    error: { type: 'string', example: 'Error updating poem' }
-                  }
-                }
-              }
-            }
-          }
+          500: { description: 'Internal server error', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } }
         }
       },
       delete: {
@@ -158,37 +76,13 @@ const spec = {
             in: 'path',
             description: 'The ID of the poem to delete',
             required: true,
-            schema: { type: 'integer', example: 1 }
+            schema: { type: 'integer' }
           }
         ],
         responses: {
-          200: {
-            description: 'Success',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    message: { type: 'string', example: 'Poem deleted successfully' }
-                  }
-                }
-              }
-            }
-          },
+          200: { description: 'Success', content: { 'application/json': { schema: { $ref: '#/components/schemas/MessageResponse' } } } },
           404: { $ref: '#/components/responses/NotFound' },
-          500: {
-            description: 'Internal server error',
-            content: {
-              'application/json': {
-                schema: {
-                  type: 'object',
-                  properties: {
-                    error: { type: 'string', example: 'Error deleting poem' }
-                  }
-                }
-              }
-            }
-          }
+          500: { description: 'Internal server error', content: { 'application/json': { schema: { $ref: '#/components/schemas/Error' } } } }
         }
       }
     }
@@ -205,15 +99,44 @@ const spec = {
             example:
               "In lines of code, we weave our art,\nA digital symphony from mind to chart.\nWith functions, loops, and logic clear,\nWe conquer problems, quelling fear.\n\nIn bytes and bits, our thoughts take flight,\nCreating programs that shine so bright.\nFrom bugs we learn, and errors mend,\nIn the world of code, there's no real end.\n\nSo, let us code with passion and grace,\nCreating software in this boundless space.\nWith every keystroke, we write our story,\nIn the language of machines, we find our glory."
           },
-          created_at: { type: 'string', format: 'timestamp', example: '2023-09-14T00:23:46.321Z' },
-          title: { type: 'string', example: "Coding Chronicles: A Programmer's Poem" }
+          created_at: { type: 'string', format: 'timestamp', example: '2020-07-01T00:00:00.000Z' },
+          title: { type: 'string', example: 'Coding Chronicles' }
+        }
+      },
+      PoemInput: {
+        type: 'object',
+        properties: {
+          author: { type: 'string', example: 'CodeVerse Muse' },
+          content: {
+            type: 'string',
+            example:
+              "In lines of code, we weave our art,\nA digital symphony from mind to chart.\nWith functions, loops, and logic clear,\nWe conquer problems, quelling fear.\n\nIn bytes and bits, our thoughts take flight,\nCreating programs that shine so bright.\nFrom bugs we learn, and errors mend,\nIn the world of code, there's no real end.\n\nSo, let us code with passion and grace,\nCreating software in this boundless space.\nWith every keystroke, we write our story,\nIn the language of machines, we find our glory."
+          },
+          title: { type: 'string', example: 'Coding Chronicles' }
+        }
+      },
+      PoemResponse: {
+        type: 'object',
+        properties: {
+          id: { type: 'integer' },
+          message: { type: 'string' }
+        }
+      },
+      MessageResponse: {
+        type: 'object',
+        properties: {
+          message: { type: 'string' }
+        }
+      },
+      Error: {
+        type: 'object',
+        properties: {
+          error: { type: 'string' }
         }
       }
     },
     responses: {
-      NotFound: {
-        description: 'Not found'
-      }
+      NotFound: { description: 'Not found' }
     }
   },
   tags: [{ name: 'Poems' }]
