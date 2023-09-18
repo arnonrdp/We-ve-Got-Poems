@@ -11,7 +11,11 @@ const pool = new Pool({
 
 // Route to add a new poem to the 'poems' table
 const create = async (req, res) => {
+  const client = await pool.connect() // Connect to the database
+
   try {
+    await client.query('BEGIN') // Start a transaction
+
     const errors = validationResult(req)
 
     if (!errors.isEmpty()) {
@@ -25,8 +29,6 @@ const create = async (req, res) => {
     const sanitizedAuthor = sanitizeUserInput(author)
     const sanitizedContent = sanitizeUserInput(content)
 
-    const client = await pool.connect()
-
     // Query SQL to insert a new poem into the 'poems' table
     const insertQuery = `
       INSERT INTO poems (title, author, content, created_at)
@@ -36,12 +38,17 @@ const create = async (req, res) => {
 
     const result = await client.query(insertQuery, [sanitizedTitle, sanitizedAuthor, sanitizedContent])
     const { id } = result.rows[0]
-    client.release()
+
+    await client.query('COMMIT') // Commit the transaction
 
     res.json({ id, message: 'Poem added successfully' })
   } catch (error) {
+    await client.query('ROLLBACK') // Rollback the transaction if an error occurred
+
     console.error('Error adding poem:', error)
     res.status(500).json({ error: 'Error adding poem' })
+  } finally {
+    client.release() // Release the connection to the database
   }
 }
 
