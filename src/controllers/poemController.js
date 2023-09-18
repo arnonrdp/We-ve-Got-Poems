@@ -124,6 +124,19 @@ const remove = async (req, res) => {
 
     const { id } = req.params
 
+    // Check if the poem with the specified ID exists before deleting it
+    const checkPoemQuery = `
+      SELECT id FROM poems
+      WHERE id = $1
+    `
+
+    const checkResult = await client.query(checkPoemQuery, [id])
+
+    // If the poem with the specified ID doesn't exist, return a 404 error
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Poem not found' })
+    }
+
     // Query SQL to delete a poem from the 'poems' table
     const deleteQuery = `
       DELETE FROM poems
