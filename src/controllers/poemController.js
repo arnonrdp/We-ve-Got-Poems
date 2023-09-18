@@ -1,5 +1,8 @@
 require('dotenv').config()
+const { validationResult } = require('express-validator')
 const { Pool } = require('pg')
+const sanitizeUserInput = require('../utils/sanitizeUserInput')
+const validateInput = require('../middlewares/validateInput')
 
 const pool = new Pool({
   connectionString: process.env.EXTERNAL_DB_URL,
@@ -9,7 +12,18 @@ const pool = new Pool({
 // Route to add a new poem to the 'poems' table
 const create = async (req, res) => {
   try {
-    const { title, author, content } = req.body // Extracts the data from the request body
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() })
+    }
+
+    const { title, author, content } = req.body // Get the title, author and content from the request body
+
+    // Sanitize the title, author and content to prevent XSS attacks
+    const sanitizedTitle = sanitizeUserInput(title)
+    const sanitizedAuthor = sanitizeUserInput(author)
+    const sanitizedContent = sanitizeUserInput(content)
 
     const client = await pool.connect()
 
@@ -20,7 +34,7 @@ const create = async (req, res) => {
       RETURNING id;
     `
 
-    const result = await client.query(insertQuery, [title, author, content])
+    const result = await client.query(insertQuery, [sanitizedTitle, sanitizedAuthor, sanitizedContent])
     const { id } = result.rows[0]
     client.release()
 
@@ -96,7 +110,11 @@ const remove = async (req, res) => {
 }
 
 module.exports = {
-  create,
+  create: [
+    // Use the validateInput middleware to validate the request body
+    validateInput(['title', 'author', 'content']),
+    create
+  ],
   read,
   update,
   remove
