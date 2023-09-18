@@ -71,6 +71,7 @@ const read = async (req, res) => {
   }
 }
 
+// Route to update a poem in the 'poems' table
 const update = async (req, res) => {
   const client = await pool.connect() // Connect to the database
 
