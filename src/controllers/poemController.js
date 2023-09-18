@@ -115,11 +115,14 @@ const update = async (req, res) => {
   }
 }
 
+// Route to delete a poem from the 'poems' table
 const remove = async (req, res) => {
-  try {
-    const { id } = req.params
+  const client = await pool.connect() // Connect to the database
 
-    const client = await pool.connect()
+  try {
+    await client.query('BEGIN') // Start a transaction
+
+    const { id } = req.params
 
     // Query SQL to delete a poem from the 'poems' table
     const deleteQuery = `
@@ -128,12 +131,17 @@ const remove = async (req, res) => {
     `
 
     await client.query(deleteQuery, [id])
-    client.release()
+
+    await client.query('COMMIT') // Commit the transaction
 
     res.json({ message: 'Poem deleted successfully' })
   } catch (error) {
+    await client.query('ROLLBACK') // Rollback the transaction if an error occurred
+
     console.error('Error deleting poem:', error)
     res.status(500).json({ error: 'Error deleting poem' })
+  } finally {
+    client.release() // Release the connection to the database
   }
 }
 
