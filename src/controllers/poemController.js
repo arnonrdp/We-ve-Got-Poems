@@ -72,25 +72,45 @@ const read = async (req, res) => {
 }
 
 const update = async (req, res) => {
+  const client = await pool.connect() // Connect to the database
+
   try {
+    await client.query('BEGIN') // Start a transaction
+
     const { id } = req.params
     const { title, author, content } = req.body
 
+    const errors = validationResult(req)
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() })
+    }
+
     const client = await pool.connect()
 
-    // Query SQL to update a poem from the 'poems' table
+    // Sanitize input fields
+    const sanitizedTitle = sanitizeUserInput(title)
+    const sanitizedAuthor = sanitizeUserInput(author)
+    const sanitizedContent = sanitizeUserInput(content)
+
+    // Query SQL to update a poem in the 'poems' table
     const updateQuery = `
       UPDATE poems
       SET title = COALESCE($1, title), author = COALESCE($2, author), content = COALESCE($3, content)
       WHERE id = $4
     `
-    await client.query(updateQuery, [title, author, content, id])
-    client.release()
+    await client.query(updateQuery, [sanitizedTitle, sanitizedAuthor, sanitizedContent, id])
+
+    await client.query('COMMIT') // Commit the transaction
 
     res.json({ message: 'Poem updated successfully' })
   } catch (error) {
+    await client.query('ROLLBACK') // Rollback the transaction if an error occurred
+
     console.error('Error updating poem:', error)
     res.status(500).json({ error: 'Error updating poem' })
+  } finally {
+    client.release() // Release the connection to the database
   }
 }
 
