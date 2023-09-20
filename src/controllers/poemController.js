@@ -100,18 +100,33 @@ const update = async (req, res) => {
       return res.status(400).json({ errors: errors.array() })
     }
 
-    // Sanitize input fields
-    const sanitizedTitle = sanitizeUserInput(title)
-    const sanitizedAuthor = sanitizeUserInput(author)
-    const sanitizedContent = sanitizeUserInput(content)
+    const updateFields = [] // Array to store fields to be updated
+    const values = [] // Array to store corresponding values
 
-    // Query SQL to update a poem in the 'poems' table
+    // Check if each property is present in the request body and add it to the updateFields and values arrays
+    if (title !== undefined) {
+      updateFields.push('title')
+      values.push(sanitizeUserInput(title))
+    }
+
+    if (author !== undefined) {
+      updateFields.push('author')
+      values.push(sanitizeUserInput(author))
+    }
+
+    if (content !== undefined) {
+      updateFields.push('content')
+      values.push(sanitizeUserInput(content))
+    }
+
+    // Construct the dynamic update query based on the fields provided
     const updateQuery = `
       UPDATE poems
-      SET title = COALESCE($1, title), author = COALESCE($2, author), content = COALESCE($3, content)
-      WHERE id = $4
+      SET ${updateFields.map((field, index) => `${field} = $${index + 1}`).join(', ')}
+      WHERE id = $${updateFields.length + 1}
     `
-    await client.query(updateQuery, [sanitizedTitle, sanitizedAuthor, sanitizedContent, id])
+
+    await client.query(updateQuery, [...values, id])
 
     await client.query('COMMIT') // Commit the transaction
 
