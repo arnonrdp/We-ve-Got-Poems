@@ -79,6 +79,19 @@ const update = async (req, res) => {
     await client.query('BEGIN') // Start a transaction
 
     const { id } = req.params
+
+    // Check if the poem with the specified ID exists before updating it
+    const checkPoemQuery = `
+      SELECT id FROM poems
+      WHERE id = $1
+    `
+    const checkResult = await client.query(checkPoemQuery, [id])
+
+    // If the poem with the specified ID doesn't exist, return a 404 error
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Poem not found' })
+    }
+
     const { title, author, content } = req.body
 
     const errors = validationResult(req)
@@ -86,8 +99,6 @@ const update = async (req, res) => {
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() })
     }
-
-    const client = await pool.connect()
 
     // Sanitize input fields
     const sanitizedTitle = sanitizeUserInput(title)
